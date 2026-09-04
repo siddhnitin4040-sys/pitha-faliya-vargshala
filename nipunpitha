@@ -1,0 +1,129 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+
+void main() {
+  runApp(const GujaratiLearningApp());
+}
+
+class GujaratiLearningApp extends StatelessWidget {
+  const GujaratiLearningApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'ગુજરાતી કક્કો',
+      theme: ThemeData(
+        primarySwatch: Colors.deepOrange,
+        useMaterial3: true,
+      ),
+      home: const AlphabetScreen(),
+    );
+  }
+}
+
+class AlphabetScreen extends StatefulWidget {
+  const AlphabetScreen({super.key});
+
+  @override
+  State<AlphabetScreen> createState() => _AlphabetScreenState();
+}
+
+class _AlphabetScreenState extends State<AlphabetScreen> {
+  final FlutterTts _flutterTts = FlutterTts();
+
+  // કક્કો અને શબ્દોની યાદી
+  final List<Map<String, String>> alphabets = [
+    {'letter': 'ક', 'word': 'કમળ'},
+    {'letter': 'ખ', 'word': 'ખટારો'},
+    {'letter': 'ગ', 'word': 'ગણપતિ'},
+    {'letter': 'ઘ', 'word': 'ઘર'},
+    {'letter': 'ચ', 'word': 'ચકલી'},
+    {'letter': 'છ', 'word': 'છતરી'},
+    {'letter': 'જ', 'word': 'જમરૂખ'},
+    {'letter': 'ઝ', 'word': 'ઝબલું'},
+    {'letter': 'ટ', 'word': 'ટપાલી'},
+    {'letter': 'ઠ', 'word': 'ઠળિયો'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _initTts();
+  }
+
+  // ગુજરાતી અવાજ માટે TTS સેટઅપ
+  void _initTts() async {
+    await _flutterTts.setLanguage("gu-IN"); // ગુજરાતી ભાષા
+    await _flutterTts.setSpeechRate(0.4);    // બાળકો માટે ધીમો અવાજ
+    await _flutterTts.setPitch(1.0);
+  }
+
+  // અક્ષર/શબ્દ બોલવા માટેનું ફંક્શન
+  void _speak(String text) async {
+    await _flutterTts.stop();
+    await _flutterTts.speak(text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ગુજરાતી કક્કો શીખો'),
+        centerTitle: true,
+        backgroundColor: Colors.deepOrange,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 1.1,
+          ),
+          itemCount: alphabets.length,
+          itemBuilder: (context, index) {
+            final item = alphabets[index];
+            return InkWell(
+              onTap: () {
+                // કાર્ડ પર ક્લિક કરવાથી અવાજ આવશે
+                _speak("${item['letter']} થી ${item['word']}");
+              },
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                color: Colors.orange.shade50,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      item['letter']!,
+                      style: const TextStyle(
+                        fontSize: 52,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepOrange,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      item['word']!,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
